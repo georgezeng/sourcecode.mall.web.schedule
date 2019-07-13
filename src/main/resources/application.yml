@@ -1,0 +1,10 @@
+spring.application.name: mall-web-schedule
+spring.session.redis.namespace: session:${spring.application.name}
+spring:
+  datasource:
+    table:
+      prefix: 
+
+user.type.name: 
+
+
