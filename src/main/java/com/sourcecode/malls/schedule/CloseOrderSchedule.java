@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,8 @@ public class CloseOrderSchedule extends AbstractSchedule {
 		QueryInfo<OrderStatus> queryInfo = new QueryInfo<>();
 		queryInfo.setData(OrderStatus.UnPay);
 		PageInfo page = new PageInfo();
+		page.setOrder(Direction.ASC);
+		page.setProperty("createTime");
 		page.setNum(1);
 		page.setSize(1000);
 		queryInfo.setPage(page);
@@ -47,6 +50,7 @@ public class CloseOrderSchedule extends AbstractSchedule {
 						orderService.save(order);
 					}
 				}
+				page.setNum(page.getNum() + 1);
 			}
 		} while (result.hasNext());
 	}

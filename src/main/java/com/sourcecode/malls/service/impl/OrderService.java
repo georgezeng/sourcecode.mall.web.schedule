@@ -10,7 +10,6 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class OrderService implements JpaService<Order, Long> {
 				return query.where(predicate.toArray(new Predicate[] {})).getRestriction();
 			}
 		};
-		return orderRepository.findAll(spec, queryInfo.getPage().pageable(Direction.ASC, "createTime"));
+		return orderRepository.findAll(spec, queryInfo.getPage().pageable());
 	}
 
 	@Override
