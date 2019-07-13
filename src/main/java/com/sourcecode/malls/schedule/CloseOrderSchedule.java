@@ -45,7 +45,7 @@ public class CloseOrderSchedule extends AbstractSchedule {
 					c1.setTime(order.getCreateTime());
 					c1.add(Calendar.DATE, 1);
 					Calendar c2 = Calendar.getInstance();
-					if (!c1.before(c2)) {
+					if (c2.after(c1)) {
 						order.setStatus(OrderStatus.Closed);
 						orderService.save(order);
 					}
