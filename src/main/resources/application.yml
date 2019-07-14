@@ -7,4 +7,7 @@ spring:
 
 user.type.name: 
 
-
+wechat:
+  user:
+    url:
+      refresh_token: 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s'
