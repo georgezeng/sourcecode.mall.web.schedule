@@ -2,7 +2,6 @@ package com.sourcecode.malls.schedule;
 
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -64,7 +63,9 @@ public class RefreshWechatTokenSchedule extends AbstractSchedule {
 						if (!StringUtils.isEmpty(accessInfo.getErrmsg())) {
 							throw new Exception(accessInfo.getErrcode() + ": " + accessInfo.getErrmsg());
 						}
-						BeanUtils.copyProperties(accessInfo, tokens);
+						tokens.setAccessToken(accessInfo.getAccessToken());
+						tokens.setRefreshToken(accessInfo.getRefreshToken());
+						tokens.setOpenId(accessInfo.getOpenId());
 						repository.save(tokens);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
