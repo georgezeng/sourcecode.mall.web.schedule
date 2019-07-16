@@ -9,15 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sourcecode.malls.domain.client.Client;
 import com.sourcecode.malls.domain.client.WechatToken;
 import com.sourcecode.malls.dto.query.PageInfo;
 import com.sourcecode.malls.dto.setting.DeveloperSettingDTO;
 import com.sourcecode.malls.dto.wechat.WechatAccessInfo;
-import com.sourcecode.malls.repository.jpa.impl.client.ClientRepository;
 import com.sourcecode.malls.repository.jpa.impl.client.WechatTokenRepository;
 import com.sourcecode.malls.schedule.base.AbstractSchedule;
 import com.sourcecode.malls.service.impl.MerchantSettingService;
@@ -26,9 +25,6 @@ import com.sourcecode.malls.service.impl.MerchantSettingService;
 public class RefreshWechatTokenSchedule extends AbstractSchedule {
 	@Autowired
 	private WechatTokenRepository repository;
-
-	@Autowired
-	private ClientRepository clientRepository;
 
 	@Autowired
 	private MerchantSettingService settingService;
@@ -59,19 +55,20 @@ public class RefreshWechatTokenSchedule extends AbstractSchedule {
 			result = repository.findAll(page);
 			if (result.hasContent()) {
 				for (WechatToken tokens : result.getContent()) {
-					Optional<Client> client = clientRepository.findById(tokens.getUserId());
-					if (client.isPresent()) {
-						try {
-							Optional<DeveloperSettingDTO> developerSetting = settingService
-									.loadWechatGzh(client.get().getMerchant().getId());
-							String response = httpClient.getForObject(String.format(refreshTokenUrl,
-									developerSetting.get().getAccount(), tokens.getRefreshToken()), String.class);
-							WechatAccessInfo accessInfo = mapper.readValue(response, WechatAccessInfo.class);
-							BeanUtils.copyProperties(accessInfo, tokens);
-							repository.save(tokens);
-						} catch (Exception e) {
-							logger.error(e.getMessage(), e);
+					try {
+						Optional<DeveloperSettingDTO> developerSetting = settingService
+								.loadWechatGzh(tokens.getMerchantId());
+						String response = httpClient.getForObject(String.format(refreshTokenUrl,
+								developerSetting.get().getAccount(), tokens.getRefreshToken()), String.class);
+						WechatAccessInfo accessInfo = mapper.readValue(response, WechatAccessInfo.class);
+						if (!StringUtils.isEmpty(accessInfo.getErrmsg())) {
+							throw new Exception(accessInfo.getErrcode() + ": " + accessInfo.getErrmsg());
 						}
+						BeanUtils.copyProperties(accessInfo, tokens);
+						repository.save(tokens);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+						repository.delete(tokens);
 					}
 				}
 				page = page.next();
