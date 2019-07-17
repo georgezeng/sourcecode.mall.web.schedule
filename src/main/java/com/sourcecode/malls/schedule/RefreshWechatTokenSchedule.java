@@ -20,7 +20,7 @@ import com.sourcecode.malls.repository.jpa.impl.client.WechatTokenRepository;
 import com.sourcecode.malls.schedule.base.AbstractSchedule;
 import com.sourcecode.malls.service.impl.MerchantSettingService;
 
-@Component
+//@Component
 public class RefreshWechatTokenSchedule extends AbstractSchedule {
 	@Autowired
 	private WechatTokenRepository repository;
