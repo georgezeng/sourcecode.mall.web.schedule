@@ -16,11 +16,11 @@ import com.sourcecode.malls.schedule.base.AbstractSchedule;
 import com.sourcecode.malls.service.impl.OrderService;
 
 @Component
-public class CloseOrderSchedule extends AbstractSchedule {
+public class ConfirmPickupOrderSchedule extends AbstractSchedule {
 	@Autowired
 	private OrderService orderService;
 
-	@Scheduled(cron = "0 * * * * ?")
+	@Scheduled(cron = "0 0 0 * * ?")
 	@Override
 	public void run() {
 		super.run();
@@ -29,7 +29,7 @@ public class CloseOrderSchedule extends AbstractSchedule {
 	@Override
 	protected void execute() throws Exception {
 		QueryInfo<OrderStatus> queryInfo = new QueryInfo<>();
-		queryInfo.setData(OrderStatus.UnPay);
+		queryInfo.setData(OrderStatus.Shipped);
 		PageInfo page = new PageInfo();
 		page.setOrder(Direction.ASC.name());
 		page.setProperty("createTime");
@@ -43,10 +43,10 @@ public class CloseOrderSchedule extends AbstractSchedule {
 				for (Order order : result.getContent()) {
 					Calendar c1 = Calendar.getInstance();
 					c1.setTime(order.getCreateTime());
-					c1.add(Calendar.DATE, 1);
+					c1.add(Calendar.DATE, 7);
 					Calendar c2 = Calendar.getInstance();
 					if (c2.after(c1)) {
-						order.setStatus(OrderStatus.Closed);
+						order.setStatus(OrderStatus.Finished);
 						orderService.save(order);
 					}
 				}
