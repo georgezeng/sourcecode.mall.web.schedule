@@ -32,7 +32,7 @@ public class ConfirmPickupOrderSchedule extends AbstractSchedule {
 		queryInfo.setData(OrderStatus.Shipped);
 		PageInfo page = new PageInfo();
 		page.setOrder(Direction.ASC.name());
-		page.setProperty("createTime");
+		page.setProperty("sentTime");
 		page.setNum(1);
 		page.setSize(1000);
 		queryInfo.setPage(page);
@@ -42,7 +42,7 @@ public class ConfirmPickupOrderSchedule extends AbstractSchedule {
 			if (result.hasContent()) {
 				for (Order order : result.getContent()) {
 					Calendar c1 = Calendar.getInstance();
-					c1.setTime(order.getCreateTime());
+					c1.setTime(order.getSentTime());
 					c1.add(Calendar.DATE, 7);
 					Calendar c2 = Calendar.getInstance();
 					if (c2.after(c1)) {
