@@ -40,6 +40,7 @@ public class CouponService {
 					CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicate = new ArrayList<>();
 				predicate.add(criteriaBuilder.equal(root.get("status"), queryInfo.getData()));
+				predicate.add(criteriaBuilder.isNotNull(root.get("endDate")));
 				return query.where(predicate.toArray(new Predicate[] {})).getRestriction();
 			}
 		};
