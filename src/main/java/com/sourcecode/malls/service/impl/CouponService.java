@@ -14,21 +14,21 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sourcecode.malls.domain.coupon.cash.CashCouponSetting;
+import com.sourcecode.malls.domain.coupon.CouponSetting;
 import com.sourcecode.malls.dto.query.QueryInfo;
 import com.sourcecode.malls.enums.CouponSettingStatus;
-import com.sourcecode.malls.repository.jpa.impl.coupon.CashCouponSettingRepository;
+import com.sourcecode.malls.repository.jpa.impl.coupon.CouponSettingRepository;
 
 @Service
 @Transactional
 public class CouponService {
 
 	@Autowired
-	protected CashCouponSettingRepository cashSettingRepository;
+	protected CouponSettingRepository cashSettingRepository;
 
 	@Transactional(readOnly = true)
-	public Page<CashCouponSetting> getCashCoupons(QueryInfo<CouponSettingStatus> queryInfo) {
-		Specification<CashCouponSetting> spec = new Specification<CashCouponSetting>() {
+	public Page<CouponSetting> getCashCoupons(QueryInfo<CouponSettingStatus> queryInfo) {
+		Specification<CouponSetting> spec = new Specification<CouponSetting>() {
 
 			/**
 			 * 
@@ -36,7 +36,7 @@ public class CouponService {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public Predicate toPredicate(Root<CashCouponSetting> root, CriteriaQuery<?> query,
+			public Predicate toPredicate(Root<CouponSetting> root, CriteriaQuery<?> query,
 					CriteriaBuilder criteriaBuilder) {
 				List<Predicate> predicate = new ArrayList<>();
 				predicate.add(criteriaBuilder.equal(root.get("status"), queryInfo.getData()));
@@ -47,7 +47,7 @@ public class CouponService {
 		return cashSettingRepository.findAll(spec, queryInfo.getPage().pageable());
 	}
 
-	public void save(CashCouponSetting data) {
+	public void save(CouponSetting data) {
 		cashSettingRepository.save(data);
 	}
 

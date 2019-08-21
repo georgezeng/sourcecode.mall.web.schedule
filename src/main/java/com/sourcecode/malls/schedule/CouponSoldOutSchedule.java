@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.sourcecode.malls.domain.coupon.cash.CashCouponSetting;
+import com.sourcecode.malls.domain.coupon.CouponSetting;
 import com.sourcecode.malls.dto.query.PageInfo;
 import com.sourcecode.malls.dto.query.QueryInfo;
 import com.sourcecode.malls.enums.CouponSettingStatus;
@@ -40,11 +40,11 @@ public class CouponSoldOutSchedule extends AbstractSchedule {
 		page.setNum(1);
 		page.setSize(1000);
 		queryInfo.setPage(page);
-		Page<CashCouponSetting> result = null;
+		Page<CouponSetting> result = null;
 		do {
 			result = couponService.getCashCoupons(queryInfo);
 			if (result.hasContent()) {
-				for (CashCouponSetting data : result.getContent()) {
+				for (CouponSetting data : result.getContent()) {
 					Calendar c1 = Calendar.getInstance();
 					c1.setTime(data.getEndDate());
 					c1.add(Calendar.DATE, 1);
