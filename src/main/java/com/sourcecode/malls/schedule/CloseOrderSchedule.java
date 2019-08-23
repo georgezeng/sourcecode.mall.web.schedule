@@ -13,12 +13,16 @@ import com.sourcecode.malls.dto.query.PageInfo;
 import com.sourcecode.malls.dto.query.QueryInfo;
 import com.sourcecode.malls.enums.OrderStatus;
 import com.sourcecode.malls.schedule.base.AbstractSchedule;
+import com.sourcecode.malls.service.impl.CacheEvictService;
 import com.sourcecode.malls.service.impl.OrderService;
 
 @Component
 public class CloseOrderSchedule extends AbstractSchedule {
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private CacheEvictService cacheEvictService;
 
 	@Scheduled(cron = "0 * * * * ?")
 	@Override
@@ -48,6 +52,7 @@ public class CloseOrderSchedule extends AbstractSchedule {
 					if (c2.after(c1)) {
 						order.setStatus(OrderStatus.Closed);
 						orderService.save(order);
+						cacheEvictService.clearClientOrders(order.getClient().getId());
 					}
 				}
 				page.setNum(page.getNum() + 1);

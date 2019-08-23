@@ -30,6 +30,9 @@ public class CouponService {
 
 	@Autowired
 	protected ClientCouponRepository clientCouponRepository;
+	
+	@Autowired
+	private CacheEvictService cacheEvictService;
 
 	@Transactional(readOnly = true)
 	public Page<CouponSetting> getCashCoupons(QueryInfo<CouponSettingStatus> queryInfo) {
@@ -56,6 +59,7 @@ public class CouponService {
 		data.setStatus(CouponSettingStatus.SoldOut);
 		couponSettingRepository.save(data);
 		clientCouponRepository.updateStatus(ClientCouponStatus.Out, data.getId(), ClientCouponStatus.UnUse);
+		cacheEvictService.clearClientCoupons(null);
 	}
 
 }
