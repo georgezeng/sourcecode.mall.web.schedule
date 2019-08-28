@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sourcecode.malls.domain.coupon.CouponSetting;
 import com.sourcecode.malls.dto.query.QueryInfo;
+import com.sourcecode.malls.enums.ClientCouponStatus;
 import com.sourcecode.malls.enums.CouponSettingStatus;
 import com.sourcecode.malls.repository.jpa.impl.coupon.ClientCouponRepository;
 import com.sourcecode.malls.repository.jpa.impl.coupon.CouponSettingRepository;
@@ -30,6 +31,9 @@ public class CouponService {
 	@Autowired
 	protected ClientCouponRepository clientCouponRepository;
 	
+	@Autowired
+	private CacheEvictService cacheEvictService;
+
 	@Transactional(readOnly = true)
 	public Page<CouponSetting> getCashCoupons(QueryInfo<CouponSettingStatus> queryInfo) {
 		Specification<CouponSetting> spec = new Specification<CouponSetting>() {
@@ -54,6 +58,8 @@ public class CouponService {
 	public void updateSoldOut(CouponSetting data) {
 		data.setStatus(CouponSettingStatus.SoldOut);
 		couponSettingRepository.save(data);
+		clientCouponRepository.updateStatus(ClientCouponStatus.Out, data.getId(), ClientCouponStatus.UnUse);
+		cacheEvictService.clearClientCoupons(null);
 	}
 
 }
