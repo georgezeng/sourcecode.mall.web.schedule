@@ -34,7 +34,7 @@ public class ClientActivityEventSchedule extends AbstractSchedule {
 		pageInfo.setNum(1);
 		pageInfo.setSize(1000);
 		pageInfo.setProperty("createTime");
-		pageInfo.setProperty(Direction.ASC.name());
+		pageInfo.setOrder(Direction.ASC.name());
 		Pageable pageable = pageInfo.pageable();
 		Page<Merchant> result = null;
 		do {
