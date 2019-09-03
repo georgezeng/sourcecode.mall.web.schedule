@@ -59,7 +59,7 @@ public class CouponService {
 		data.setStatus(CouponSettingStatus.SoldOut);
 		couponSettingRepository.save(data);
 		clientCouponRepository.updateStatus(ClientCouponStatus.Out, data.getId(), ClientCouponStatus.UnUse);
-		cacheEvictService.clearClientCoupons(null);
+		cacheEvictService.clearClientCouponNums(null);
 	}
 
 }

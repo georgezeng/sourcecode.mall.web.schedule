@@ -13,7 +13,7 @@ import com.sourcecode.malls.dto.query.PageInfo;
 import com.sourcecode.malls.dto.query.QueryInfo;
 import com.sourcecode.malls.enums.OrderStatus;
 import com.sourcecode.malls.schedule.base.AbstractSchedule;
-import com.sourcecode.malls.service.impl.CacheEvictService;
+import com.sourcecode.malls.service.impl.CacheClearer;
 import com.sourcecode.malls.service.impl.OrderService;
 
 @Component
@@ -22,7 +22,7 @@ public class ConfirmPickupOrderSchedule extends AbstractSchedule {
 	private OrderService orderService;
 	
 	@Autowired
-	private CacheEvictService cacheEvictService;
+	private CacheClearer clearer;
 
 	@Scheduled(cron = "0 0 0 * * ?")
 	@Override
@@ -52,7 +52,7 @@ public class ConfirmPickupOrderSchedule extends AbstractSchedule {
 					if (c2.after(c1)) {
 						order.setStatus(OrderStatus.Finished);
 						orderService.save(order);
-						cacheEvictService.clearClientOrders(order.getClient().getId());
+						clearer.clearClientOrders(order.getClient());
 					}
 				}
 				page.setNum(page.getNum() + 1);
