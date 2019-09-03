@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.sourcecode.malls.schedule.base.AbstractSchedule;
 import com.sourcecode.malls.service.impl.CacheEvictService;
 
-@Component
+//@Component
 public class GoodsItemListCacheEvictSchedule extends AbstractSchedule {
 
 	@Autowired
