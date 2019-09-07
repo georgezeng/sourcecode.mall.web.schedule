@@ -52,7 +52,7 @@ public class CloseOrderSchedule extends AbstractSchedule {
 					if (c2.after(c1)) {
 						order.setStatus(OrderStatus.Closed);
 						orderService.save(order);
-						clearer.clearClientOrders(order.getClient());
+						clearer.clearClientOrders(order);
 					}
 				}
 				page.setNum(page.getNum() + 1);

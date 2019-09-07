@@ -52,7 +52,7 @@ public class ConfirmPickupOrderSchedule extends AbstractSchedule {
 					if (c2.after(c1)) {
 						order.setStatus(OrderStatus.Finished);
 						orderService.save(order);
-						clearer.clearClientOrders(order.getClient());
+						clearer.clearClientOrders(order);
 					}
 				}
 				page.setNum(page.getNum() + 1);
