@@ -40,8 +40,10 @@ public class ClientActivityEventSchedule extends AbstractSchedule {
 		do {
 			result = merchantRepository.findAll(pageable);
 			if (result.hasContent()) {
-				result.get().filter(it -> it.isEnabled()).forEach(it -> {
-					bonusService.setIsActivityEventTime(it);
+				result.get().forEach(it -> {
+					if (it.isEnabled()) {
+						bonusService.setIsActivityEventTime(it);
+					}
 				});
 				pageable = pageable.next();
 			}
