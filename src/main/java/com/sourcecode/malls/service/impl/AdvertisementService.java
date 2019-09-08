@@ -23,13 +23,14 @@ public class AdvertisementService {
 	@Autowired
 	private MerchantRepository merchantRepository;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public void updateStatus(Long merchantId) {
 		Date now = new Date();
 		Optional<Merchant> merchant = merchantRepository.findById(merchantId);
 		if (merchant.isPresent()) {
 			List<AdvertisementSetting> list = repository.findAllByMerchant(merchant.get());
 			for (AdvertisementSetting setting : list) {
+				System.out.println(setting.getName() + ": " + (!setting.getStartTime().after(now) && !now.after(setting.getEndTime())));
 				setting.setEnabled(!setting.getStartTime().after(now) && !now.after(setting.getEndTime()));
 			}
 			repository.saveAll(list);

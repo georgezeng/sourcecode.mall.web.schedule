@@ -26,8 +26,8 @@ public class AdvertisementStatusUpdateSchedule extends AbstractSchedule {
 	@Override
 	protected void execute() throws Exception {
 		long count = merchantRepository.count();
-		for (long i = 1; i <= count; i++) {
-			service.updateStatus(count);
+		for (long i = 2; i <= count; i++) {
+			service.updateStatus(i);
 		}
 	}
 
