@@ -35,10 +35,10 @@ public class AdvertisementService {
 				boolean enabled = !setting.getStartTime().after(now) && !now.after(setting.getEndTime());
 				if (enabled != setting.isEnabled()) {
 					cacheEvictService.clearAdvertisementList(merchantId, setting.getType());
+					setting.setEnabled(enabled);
+					repository.save(setting);
 				}
-				setting.setEnabled(enabled);
 			}
-			repository.saveAll(list);
 		}
 	}
 
