@@ -23,15 +23,20 @@ public class AdvertisementService {
 	@Autowired
 	private MerchantRepository merchantRepository;
 
-	@Transactional
+	@Autowired
+	private CacheEvictService cacheEvictService;
+
 	public void updateStatus(Long merchantId) {
 		Date now = new Date();
 		Optional<Merchant> merchant = merchantRepository.findById(merchantId);
 		if (merchant.isPresent()) {
 			List<AdvertisementSetting> list = repository.findAllByMerchant(merchant.get());
 			for (AdvertisementSetting setting : list) {
-				System.out.println(setting.getName() + ": " + (!setting.getStartTime().after(now) && !now.after(setting.getEndTime())));
-				setting.setEnabled(!setting.getStartTime().after(now) && !now.after(setting.getEndTime()));
+				boolean enabled = !setting.getStartTime().after(now) && !now.after(setting.getEndTime());
+				if (enabled != setting.isEnabled()) {
+					cacheEvictService.clearAdvertisementList(merchantId, setting.getType());
+				}
+				setting.setEnabled(enabled);
 			}
 			repository.saveAll(list);
 		}
