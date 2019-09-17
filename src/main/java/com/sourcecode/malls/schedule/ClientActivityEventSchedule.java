@@ -11,6 +11,7 @@ import com.sourcecode.malls.domain.merchant.Merchant;
 import com.sourcecode.malls.dto.query.PageInfo;
 import com.sourcecode.malls.repository.jpa.impl.merchant.MerchantRepository;
 import com.sourcecode.malls.schedule.base.AbstractSchedule;
+import com.sourcecode.malls.service.impl.CacheEvictService;
 import com.sourcecode.malls.service.impl.ClientBonusService;
 
 @Component
@@ -20,7 +21,10 @@ public class ClientActivityEventSchedule extends AbstractSchedule {
 	private MerchantRepository merchantRepository;
 
 	@Autowired
-	private ClientBonusService bonusService;
+	private CacheEvictService cacheEvictService;
+
+	@Autowired
+	private ClientBonusService clientBonusService;
 
 	@Scheduled(cron = "0 * * * * ?")
 	@Override
@@ -41,8 +45,8 @@ public class ClientActivityEventSchedule extends AbstractSchedule {
 			result = merchantRepository.findAll(pageable);
 			if (result.hasContent()) {
 				result.get().forEach(it -> {
-					if (it.isEnabled()) {
-						bonusService.setIsActivityEventTime(it);
+					if (clientBonusService.isActivityEventTimeWithoutCache(it) != clientBonusService.isActivityEventTime(it)) {
+						cacheEvictService.clearClientActivityEventTime(it.getId());
 					}
 				});
 				pageable = pageable.next();
